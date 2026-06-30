@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: PanPiper
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 18
+  name: Pan Piper
+  effect: At the end of turn summons a rat.
+  faction: Enchanter
+  rarityType: 3
+  rarity: {fileID: -103892641176029460, guid: 413293d5ca3748c4a91583bf36f93cae, type: 3}
+  essence: 4
+  attack: 2
+  vigor: 2
+  art: {fileID: -4856938221056655813, guid: 9084be760eb59c045ac4ab38233184db, type: 3}
+  border: {fileID: 1763963168843240256, guid: 706dac6c7d9789341aa54e34504e2678, type: 3}

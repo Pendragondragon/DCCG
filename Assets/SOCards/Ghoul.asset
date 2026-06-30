@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: Ghoul
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 2
+  name: Ghoul
+  effect: Deals 2 damage.
+  faction: Enchanter
+  rarityType: 0
+  rarity: {fileID: -2330701393990720033, guid: 104cd7813a260444385b795641278e27, type: 3}
+  essence: 3
+  attack: 1
+  vigor: 3
+  art: {fileID: 6515602111186535438, guid: 3d0efeacc4441b9499ee2b6d5e9e4218, type: 3}
+  border: {fileID: 1763963168843240256, guid: 706dac6c7d9789341aa54e34504e2678, type: 3}

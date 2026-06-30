@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: Urgok
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 25
+  name: Urgok, Thunderblade
+  effect: Thunder
+  faction: Neutral
+  rarityType: 4
+  rarity: {fileID: 574644335803195889, guid: 46ef5da4d02772e4da7491328b38172a, type: 3}
+  essence: 5
+  attack: 4
+  vigor: 5
+  art: {fileID: 5168418082507566045, guid: 0931b915ec67733438a267e71a916c8a, type: 3}
+  border: {fileID: 3622792381989719942, guid: 16dce4054f2aee74cad08ef554eb22c9, type: 3}

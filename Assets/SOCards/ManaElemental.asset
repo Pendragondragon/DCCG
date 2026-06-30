@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: ManaElemental
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 43
+  name: Mana Elemental
+  effect: Draw a card. Grants 1 essence point.
+  faction: Enchanter
+  rarityType: 1
+  rarity: {fileID: -6175974888105078387, guid: 100da5646de0c4641be404f9948d3085, type: 3}
+  essence: 2
+  attack: 1
+  vigor: 2
+  art: {fileID: -448989420647192100, guid: 52abfc3347b92f3478851a97158d72fc, type: 3}
+  border: {fileID: 1763963168843240256, guid: 706dac6c7d9789341aa54e34504e2678, type: 3}

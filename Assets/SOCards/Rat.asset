@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: Rat
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 23
+  name: Rat
+  effect: 
+  faction: Enchanter
+  rarityType: 0
+  rarity: {fileID: -2330701393990720033, guid: 104cd7813a260444385b795641278e27, type: 3}
+  essence: 1
+  attack: 1
+  vigor: 1
+  art: {fileID: -3578019587575532720, guid: 42923dfebadd3074b82b329aac9a694e, type: 3}
+  border: {fileID: 1763963168843240256, guid: 706dac6c7d9789341aa54e34504e2678, type: 3}

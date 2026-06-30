@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: ClericApprentice
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 1
+  name: Cleric Apprentice
+  effect: Heal 2.
+  faction: Neutral
+  rarityType: 0
+  rarity: {fileID: -2330701393990720033, guid: 104cd7813a260444385b795641278e27, type: 3}
+  essence: 3
+  attack: 1
+  vigor: 3
+  art: {fileID: 8947540647373378626, guid: a34ab6dc297becf43a5db8621b641a83, type: 3}
+  border: {fileID: 3622792381989719942, guid: 16dce4054f2aee74cad08ef554eb22c9, type: 3}

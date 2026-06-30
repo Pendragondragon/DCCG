@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: Merlin
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 20
+  name: Merlin, Archmage
+  effect: Deals 4 dmage to a random enemy at the end of turn.
+  faction: Enchanter
+  rarityType: 4
+  rarity: {fileID: 574644335803195889, guid: 46ef5da4d02772e4da7491328b38172a, type: 3}
+  essence: 6
+  attack: 6
+  vigor: 4
+  art: {fileID: 7184979195099474546, guid: 3b30f350b9a51264db6433228bf2a47c, type: 3}
+  border: {fileID: 1763963168843240256, guid: 706dac6c7d9789341aa54e34504e2678, type: 3}

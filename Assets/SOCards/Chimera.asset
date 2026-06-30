@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: Chimera
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 7
+  name: Chimera
+  effect: Provoke
+  faction: Monster Slayer
+  rarityType: 1
+  rarity: {fileID: -6175974888105078387, guid: 100da5646de0c4641be404f9948d3085, type: 3}
+  essence: 5
+  attack: 3
+  vigor: 5
+  art: {fileID: -7038271629089209879, guid: b1c7c09e828b82046bf8a516d9e77cb5, type: 3}
+  border: {fileID: -3407832693855752427, guid: 97da6b0076d563a41bd6c669cf72195f, type: 3}

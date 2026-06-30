@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ae6c43e1e5dac4ab8dc0426762ce7f, type: 3}
+  m_Name: QuestingBeast
+  m_EditorClassIdentifier: Assembly-CSharp::Card
+  id: 12
+  name: Questing Beast
+  effect: Draw 2 cards
+  faction: Monster Slayer
+  rarityType: 2
+  rarity: {fileID: -1937555851702403715, guid: bd121cf8cebf1f940b1f38656f8765f6, type: 3}
+  essence: 4
+  attack: 4
+  vigor: 4
+  art: {fileID: -114105472499759940, guid: 80aae8ee0ceb34047bede40f29edaa68, type: 3}
+  border: {fileID: -3407832693855752427, guid: 97da6b0076d563a41bd6c669cf72195f, type: 3}
