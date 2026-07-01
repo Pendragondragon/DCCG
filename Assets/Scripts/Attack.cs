@@ -4,8 +4,9 @@ using UnityEngine.EventSystems;
 
 public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    //Variables Needed
     [Header("Line Settings")]
-    public GameObject linePrefab; 
+    public GameObject linePrefab;
     private GameObject activeLine;
     private RectTransform lineRect;
     private CardDisplay cardDisplay;
@@ -18,6 +19,7 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         FindTurnSystem();
     }
 
+    //Searching system to get te TurnSystem manager in the hierarchy 
     private void FindTurnSystem()
     {
         if (turnSystem == null)
@@ -32,43 +34,45 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         FindTurnSystem();
         if (turnSystem == null) return;
 
-        // 1. Summoning Sickness Check
-        // Get the current turn from your TurnSystem (ensure your TurnSystem has a public variable or property for this)
+        // Calculate current turn context based on whose turn is active
         int currentGlobalTurn = turnSystem.isPlayerTurn ? turnSystem.playerTurn : turnSystem.opponentTurn;
         
-        // Existing validation logic
+        // Cache the card's immediate UI parent container for validation checks
         Transform currentParent = this.transform.parent;
         if (currentParent == null) return;
 
-        // 2. Summoning Sickness Check
-        // Get the current global turn count
+        // Duplicate turn count calculation
         int currentTurnCount = turnSystem.isPlayerTurn ? turnSystem.playerTurn : turnSystem.opponentTurn;
         
-        // Check if the card was spawned on this current turn
+        // Rule Check: Summoning Sickness/Slumber (meaning can't attack the turn it entered)
+        //If the turn counter when the card enters matches the current turn, the attack doesn't happen.
         if (cardDisplay != null && cardDisplay.turnSpawned == currentTurnCount)
         {
-            Debug.LogWarning($"[COMBAT] {gameObject.name} has summoning sickness and cannot attack!");
+            Debug.LogWarning($"Combat: {gameObject.name} has summoning sickness and cannot attack!");
             return; 
         }
 
-        // 3. Validation Logic
+        // Checks if it's player turn, player can only attack on its turn
         if (!turnSystem.isPlayerTurn) return;
         if (currentParent.name == "Hand" || currentParent.CompareTag("HandPlayer")) return;
         
+        // Make sure that the monster is in the player's battlefield
         if (!IsValidBattlefieldParent(currentParent))
         {
-            Debug.LogWarning($"[ATTACK BLOCK] Drag rejected for '{gameObject.name}'");
+            Debug.LogWarning($"[Attack Blocked: Drag rejected for '{gameObject.name}'");
             return;
         }
 
+        // Allow attack
         isAttackingAllowed = true;
 
-        // 4. Setup targeting line (your existing code)
+        // Draw target line to attack
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas == null) canvas = FindFirstObjectByType<Canvas>();
         
         if (linePrefab != null && canvas != null)
         {
+            //Spawns the target arrow overlayed in the scene
             activeLine = Instantiate(linePrefab, canvas.transform);
             lineRect = activeLine.GetComponent<RectTransform>();
             
@@ -82,16 +86,19 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnDrag(PointerEventData eventData)
     {
+        //Cancels attack if the attack wasn't verified or if the line failed 
         if (!isAttackingAllowed || activeLine == null || lineRect == null) return;
         
         Vector2 startPos = transform.position;
         Vector2 endPos = eventData.position;
         lineRect.position = startPos;
         
+        //Calculations for direction and angle
         Vector2 direction = endPos - startPos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         lineRect.rotation = Quaternion.Euler(0, 0, angle - 90);
         
+        //Calculations for distance
         float distance = Vector2.Distance(startPos, endPos);
         lineRect.sizeDelta = new Vector2(lineRect.sizeDelta.x, distance);
     }
@@ -123,7 +130,7 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
         if (hitObject == null) return;
 
-        // Lógica de Detecção de Alvo
+        // Target verification
         Transform currentCheck = hitObject.transform;
         bool hitOpponentFace = false;
 
@@ -137,13 +144,14 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             currentCheck = currentCheck.parent;
         }
 
+        // reading that it targets opponents avatar
         if (hitOpponentFace)
         {
             AttackOpponentFace();
             return;
         }
 
-        // Ataque a monstros
+        // reading that it targets opponents monster
         CardDisplay targetCard = hitObject.GetComponentInParent<CardDisplay>();
         if (targetCard != null && targetCard.transform.parent != null)
         {
@@ -154,21 +162,24 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         }
     }
 
+    // Attack directly opponents avatar
     private void AttackOpponentFace()
     {
         OpponentHP opponent = FindFirstObjectByType<OpponentHP>();
         if (opponent != null && cardDisplay != null)
         {
-            Debug.Log($"[COMBAT] Ataque direto para {cardDisplay.currentAttack} de dano!");
+            Debug.Log($"[Combat:] Atack directly {cardDisplay.currentAttack} points of damage!");
             opponent.TakeDamage(cardDisplay.currentAttack);
         }
     }
 
+    // Attack opponents monster 
     private void AttackEnemyMonster(CardDisplay enemy)
     {
         if (cardDisplay == null || enemy == null) return;
-        Debug.Log($"[COMBAT] Combate entre monstros!");
+        Debug.Log($"[Combat:] Combat between monsters!");
         
+        // apply damage taken on creature
         int pDmg = cardDisplay.currentAttack;
         int eDmg = enemy.currentAttack;
 
@@ -176,6 +187,7 @@ public class Attack : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         cardDisplay.TakeDamage(eDmg);
     }
 
+    // Checks thatthe card is in player's side of the board in the hierarchy
     private bool IsValidBattlefieldParent(Transform node)
     {
         while (node != null)
