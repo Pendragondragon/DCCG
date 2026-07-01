@@ -4,11 +4,12 @@ using UnityEngine.EventSystems;
 
 public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
 {
+    // Variables Needed
     public enum AvatarType { Zephyr, Dragonslayer }
 
     [Header("Required References")]
-    public Will playerWill;       // Drag your Will object here
-    public TurnSystem turnSystem; // Drag your TurnSystem object here
+    public Will playerWill;      
+    public TurnSystem turnSystem;
 
     [Header("Avatar Settings")]
     public AvatarType avatarType;
@@ -56,27 +57,28 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
     {
         bool isPlayer = gameObject.transform.root.name.Contains("Player");
     
-        // Now turnSystem and playerWill are recognized because they are defined above
         if (turnSystem == null || !turnSystem.isPlayerTurn) return;
 
+        // Game Rule: Needs Exactly 7will points to perform
         if (playerWill != null && playerWill.currentWill == 7) 
         {
-            playerWill.currentWill = 0; // Reset cost
+            // Reset cost once its used
+            playerWill.currentWill = 0; 
             playerWill.UpdateWillVisuals();
             ExecuteReincarnation(true);
         }
         else
         {
-            Debug.LogWarning("[REINCARNATION] Not enough Will or wrong amount!");
+            Debug.LogWarning("Reincarnation: Not enough Will or wrong amount!");
         }
     }
 
     public bool TryExecuteReincarnationForAI()
     {
-        // AI specifically finds the Opponent's Will
+        // Specifically finds the Opponent's Will
         Will oppWill = GameObject.Find("OpponentWill")?.GetComponentInChildren<Will>();
         
-        // Only AI logic: if Will is 7, spend to 0 and summon
+        // opponent logic: if Will is 7, spend to 0 and summon
         if (oppWill != null && oppWill.currentWill == 7)
         {
             oppWill.currentWill = 0;
@@ -89,7 +91,7 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
 
     private void ExecuteReincarnation(bool isPlayerSide)
     {
-        // 1. Setup identification
+        // Setup identification
         Transform rootParent = transform;
         while (rootParent.parent != null)
         {
@@ -101,41 +103,42 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
         Will sideWill = isPlayerSide ? playerWill : GameObject.Find("OpponentWill")?.GetComponentInChildren<Will>();
         if (sideWill == null) 
         {
-            Debug.LogError($"[CRITICAL] Could not find Will pool for side: {(isPlayerSide ? "Player" : "Opponent")}");
+            Debug.LogError($"Critical: Could not find Will pool for side: {(isPlayerSide ? "Player" : "Opponent")}");
             return;
         }
 
-        // 2. Define variables ONCE
+        // Board Check
         string laneName = isPlayerSide ? "BattlefieldPlayer" : "BattlefieldOpponent";
         GameObject targetBattlefield = GameObject.Find(laneName) ?? GameObject.FindWithTag(laneName);
 
+        // Check to not happen if the board already has 7 monsters
         if (targetBattlefield == null || targetBattlefield.transform.childCount >= 7) return;
 
         ScriptableObject targetSO = (avatarType == AvatarType.Zephyr) ? zephyrCardData : ragnarkCardData;
         if (targetSO == null) return;
 
-        // 3. Spend Resources
+        // Spend Resources
         sideWill.SpendWill(willCost);
 
-        // 4. Instantiate and setup variables
+        // Instantiate and setup variables
         GameObject bossInstance = Instantiate(cardPrefab, targetBattlefield.transform);
         CardDisplay display = bossInstance.GetComponent<CardDisplay>();
         TurnSystem ts = FindFirstObjectByType<TurnSystem>();
 
-        // 5. Set spawning turn logic
+        // Turn State
         if (display != null && ts != null)
         {
             display.turnSpawned = isPlayerSide ? ts.playerTurn : ts.opponentTurn;
             display.turnSummoned = display.turnSpawned; // Syncing both
         }
 
-        // 6. Handle Components
+        // Handle Components
         Attack oldAttackComp = bossInstance.GetComponent<Attack>();
         if (oldAttackComp != null) Destroy(oldAttackComp);
 
         CardInteraction interaction = bossInstance.GetComponent<CardInteraction>();
 
-        // 7. Configure Avatar Type
+        // Configure Avatar Type
         if (avatarType == AvatarType.Zephyr)
         {
             bossInstance.name = "Zephyr_Necromancer";
@@ -153,7 +156,7 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
             deathTrigger.linePrefab = linePrefab;
         }
 
-        // 8. Final UI/Logic Refresh
+        // Card UI Refresh
         if (display != null && display.displayCard != null)
         {
             display.currentAttack = display.displayCard.attack;
@@ -163,9 +166,10 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
             display.RefreshCardUI();
         }
 
-        // 9. Interaction Setup
+        // Interaction Setup
         if (isPlayerSide)
         {
+            // Player Confguration
             if (interaction == null) interaction = bossInstance.AddComponent<CardInteraction>();
             interaction.linePrefab = this.linePrefab;
             interaction.cardPrefab = this.cardPrefab;
@@ -175,12 +179,13 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
         }
         else
         {
+            // opponent configuration
             if (interaction != null) Destroy(interaction);
             if (bossInstance.GetComponent<CardInteractionOpponent>() == null) 
                 bossInstance.AddComponent<CardInteractionOpponent>();
         }
 
-        // 10. Position and Layout
+        // Position and Layout
         RectTransform rect = bossInstance.GetComponent<RectTransform>();
         if (rect != null)
         {
@@ -191,6 +196,6 @@ public class AvatarReincarnationButton : MonoBehaviour, IPointerClickHandler
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(targetBattlefield.GetComponent<RectTransform>());
-        Debug.Log($"[SUCCESS] {bossInstance.name} summoned onto layout lane: {laneName}!");
+        Debug.Log($"Success: {bossInstance.name} summoned onto layout lane: {laneName}!");
     }
 }
