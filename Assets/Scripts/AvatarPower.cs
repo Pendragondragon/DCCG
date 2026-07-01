@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    // Variables Neded
     [Header("Power Settings")]
     public string powerName = "Avatar Power";
     public int essenceCost = 2;
@@ -24,6 +25,7 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         FindTurnSystem();
     }
 
+    //Searching system to get te TurnSystem manager in the hierarchy 
     private void FindTurnSystem()
     {
         if (turnSystem == null)
@@ -38,24 +40,24 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         isPowerAllowed = false;
         FindTurnSystem();
 
-        // 1. Enforce turn rules
+        // Turn Rule: Only Playable on Player's turn
         if (turnSystem != null && !turnSystem.isPlayerTurn) return;
 
-        // 2. Enforce ONCE PER TURN restriction
+        // Game Rule: Can Only be used once per turn
         if (hasBeenUsedThisTurn)
         {
-            Debug.LogWarning($"[{powerName}] Already used this turn!");
+            Debug.LogWarning($"{powerName}: Already used this turn!");
             return;
         }
 
-        // 3. Enforce resource availability
+        // Game Rule: It needs enough essence points
         if (turnSystem != null && turnSystem.playerEssenceCurrent < essenceCost)
         {
-            Debug.LogWarning($"[{powerName}] Not enough Essence! Costs {essenceCost}.");
+            Debug.LogWarning($"{powerName}: Not enough Essence! Costs {essenceCost}.");
             return;
         }
 
-        // 🛠️ HIERARCHY SECURITY GUARD
+        // Making sure it doesnt use opponent's ability
         Transform currentParent = transform;
         bool belongsToOpponent = false;
 
@@ -63,13 +65,13 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         {
             string parentNameLower = currentParent.name.ToLower();
             
-            // Check if this component sits inside any layout branch labeled for the Opponent
+            // Check its related to opponent
             if (parentNameLower == "opponent" || parentNameLower.Contains("opponent"))
             {
                 belongsToOpponent = true;
                 break;
             }
-            // Stop parsing early if we explicitly hit the Player's tree branch root instead
+            // Check its related to player
             if (parentNameLower == "player" || parentNameLower.Contains("player"))
             {
                 belongsToOpponent = false;
@@ -79,15 +81,16 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             currentParent = currentParent.parent;
         }
 
-        // 🌟 ANTI-CHEAT BLOCK ENFORCED: Disallow interactions if it belongs to the opponent
+        // Reject event if it belongs to the opponent the ability
         if (belongsToOpponent)
         {
-            Debug.LogWarning($"[AVATAR POWER VIOLATION] Action Blocked! {powerName} belongs to the opponent. You cannot trigger it on your turn!");
+            Debug.LogWarning($"Avatar Pwer Validation: Action Blocked! {powerName} belongs to the opponent. You cannot trigger it on your turn!");
             return;
         }
 
         isPowerAllowed = true;
 
+        //Draws the targetting line
         Canvas canvas = GetComponentInParent<Canvas>();
         if (canvas == null) canvas = FindFirstObjectByType<Canvas>();
 
@@ -100,7 +103,8 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
     }
 
     public void OnDrag(PointerEventData eventData)
-    {
+    {   
+        //Cancels power if the power wasn't verified or if the line failed 
         if (!isPowerAllowed || activeLine == null || lineRect == null) return;
 
         Vector2 startPos = eventData.pressPosition; 
@@ -108,10 +112,12 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
         lineRect.position = startPos;
 
+        //Calculations for direction and angle
         Vector2 direction = endPos - startPos;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         lineRect.rotation = Quaternion.Euler(0, 0, angle - 90);
 
+        //Calculations for distance
         float distance = Vector2.Distance(startPos, endPos);
         lineRect.sizeDelta = new Vector2(lineRect.sizeDelta.x, distance);
     }
@@ -125,6 +131,7 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
         GameObject hitObject = eventData.pointerCurrentRaycast.gameObject;
         
+        // Fallback
         if (hitObject == null)
         {
             var pointerData = new PointerEventData(EventSystem.current) { position = eventData.position };
@@ -155,34 +162,39 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             currentCheck = currentCheck.parent; 
         }
 
+        // Target matches opponents avatar 
         if (hitOpponentFace)
         {
             ExecutePowerDamage();
             OpponentHP opponent = FindFirstObjectByType<OpponentHP>();
             if (opponent != null) opponent.TakeDamage(damageAmount);
-            Debug.Log($"[{powerName}] Blasted face for {damageAmount} damage!");
+            Debug.Log($"{powerName}: Hit face for {damageAmount} damage!");
             return;
         }
 
+        // Target matches opponents monster
         CardDisplay targetCard = hitObject.GetComponentInParent<CardDisplay>();
         if (targetCard != null && targetCard.transform.parent != null)
         {
             if (targetCard.transform.parent.name == "BattlefieldOpponent" || targetCard.transform.parent.CompareTag("BattlefieldOpponent"))
             {
-                // 👥 SHADOWVEIL SECURITY CHECK
+                // Shadowveil Check
                 if (targetCard.hasShadowveil)
                 {
-                    Debug.LogWarning($"[HEROIC POWER CANCELLED] Cannot target {targetCard.displayCard.name} because it is shrouded in Shadowveil!");
+                    Debug.LogWarning($"Avatar Power Cancelled: Cannot target {targetCard.displayCard.name} because it is shrouded in Shadowveil!");
                     return; 
                 }
 
+                //Deduct resource cost and mark used flags
                 ExecutePowerDamage();
+                // process health reductions
                 targetCard.TakeDamage(damageAmount);
                 Debug.Log($"[{powerName}] Dealt {damageAmount} damage to {targetCard.gameObject.name}!");
             }
         }
     }
 
+    // Proccesses essence consumption
     private void ExecutePowerDamage()
     {
         if (turnSystem != null)
@@ -191,7 +203,8 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             hasBeenUsedThisTurn = true; 
         }
     }
-
+    
+    // Same logic for opponent
     public void ExecutePowerOpponent(GameObject targetObject)
     {
         FindTurnSystem();
@@ -204,7 +217,7 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
         {
             if (targetCard.hasShadowveil)
             {
-                Debug.LogWarning($"[AI POWER CANCELLED] Cannot target {targetCard.displayCard.name} due to Shadowveil.");
+                Debug.LogWarning($"Opponent Avatar Power Cancelled: Cannot target {targetCard.displayCard.name} due to Shadowveil.");
                 return;
             }
             
@@ -213,7 +226,7 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
             hasBeenUsedThisTurn = true;
             
             targetCard.TakeDamage(damageAmount);
-            Debug.Log($"[AI AVATAR POWER] Blasted creature {targetCard.gameObject.name} for {damageAmount} damage!");
+            Debug.Log($"Opponent Avatar Power: Hit creature {targetCard.gameObject.name} for {damageAmount} damage!");
         }
         else if (targetObject.GetComponent<PlayerHP>() != null)
         {
@@ -222,7 +235,7 @@ public class AvatarPower : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndD
 
             PlayerHP playerFace = FindFirstObjectByType<PlayerHP>();
             if (playerFace != null) playerFace.TakeDamage(damageAmount);
-            Debug.Log($"[AI AVATAR POWER] Blasted player face directly for {damageAmount} damage!");
+            Debug.Log($"Opponent Avatar Power: Hit player face directly for {damageAmount} damage!");
         }
     }
 }
