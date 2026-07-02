@@ -7,6 +7,7 @@ using TMPro;
 
 public class CardDisplay : MonoBehaviour
 {
+    //Needed Variables
     public Card displayCard;
     public int displayId;
 
@@ -75,6 +76,7 @@ public class CardDisplay : MonoBehaviour
         {
             string parentName = this.transform.parent.name;
 
+            // what is revealed 
             if (parentName == "Hand" || 
                 parentName == "BattlefieldPlayer" || 
                 parentName == "BattlefieldOpponent" ||
@@ -83,6 +85,7 @@ public class CardDisplay : MonoBehaviour
             {
                 cardCover = false;
             }
+            //what isnt revealed
             else if (parentName == "Deck" || parentName == "OpponentHand" || parentName == "OpponentDeck")
             {
                 cardCover = true;
@@ -105,7 +108,7 @@ public class CardDisplay : MonoBehaviour
         RefreshCardUI();
     }
 
-    // Inside CardDisplay.cs
+    //Buffs
     public void RecalculateAuraBonuses()
     {
         auraAttackBonus = 0;
@@ -178,6 +181,7 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
+    //Trigger for Merlin
     public void TriggerMerlinEndTurnEffect(bool isPlayerSide)
     {
         List<object> validTargets = new List<object>();
@@ -224,8 +228,8 @@ public class CardDisplay : MonoBehaviour
 
             if (chosenFoe is CardDisplay monster)
             {
-                Debug.Log($"[MERLIN] Magic missile deals 4 damage to monster: {monster.gameObject.name}");
-                // No damageSource provided: won't trigger standard combat Will points
+                Debug.Log($"Merlin: Magic spell deals 4 damage to monster: {monster.gameObject.name}");
+                // No damageSource provided: won't trigger Will points
                 monster.TakeDamage(4, null); 
             }
             else if (chosenFoe is OpponentHP opponentFace)
@@ -239,6 +243,7 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
+    //Trigger for Mutated Hunter
     public void TriggerMutatedHunterGrowth()
     {
         currentAttack += 1;
@@ -247,6 +252,7 @@ public class CardDisplay : MonoBehaviour
         RefreshCardUI();
     }
 
+    //Trigger for Pan Piper
     public void TriggerPanPiperSummon(bool isPlayerSide)
     {
         GameObject battlefield = isPlayerSide ? GameObject.Find("BattlefieldPlayer") : GameObject.Find("BattlefieldOpponent");
@@ -319,6 +325,7 @@ public class CardDisplay : MonoBehaviour
         RefreshAllBattlefieldCards();
     }
 
+    //Trigger for Lyra
     public void TriggerLyraDamageEffect(bool isPlayerSide)
     {
         if (isPlayerSide)
@@ -333,6 +340,7 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
+    //Trigger for Bloodlust
     public void TriggerBloodlust()
     {
         currentAttack += 1;
@@ -358,6 +366,7 @@ public class CardDisplay : MonoBehaviour
         
         Color blessedGreen = new Color(0.2f, 0.85f, 0.3f); 
 
+        //Defining colors: greens as buff, red as wound
         if (attackText != null)
         {
             if (isBuffed || auraAttackBonus > 0 || finalUIDisplayedAttack > displayCard.attack)
@@ -365,7 +374,7 @@ public class CardDisplay : MonoBehaviour
             else
                 attackText.color = Color.white;
         }
-
+        
         if (vigorText != null)
         {
             int baseMaxVigorWithAura = displayCard.vigor + auraVigorBonus;
@@ -386,6 +395,7 @@ public class CardDisplay : MonoBehaviour
             hasDash = true;
         }
 
+        //Effect for Shadowveil
         if (hasShadowveil)
         {
             if (artImage != null) artImage.color = new Color(0.4f, 0.3f, 0.6f, 0.6f);
@@ -400,7 +410,7 @@ public class CardDisplay : MonoBehaviour
         }
     }
 
-    
+    //Taking damage
     public void TakeDamage(int damageAmount, CardDisplay damageSource = null)
     {
         if (damageSource != null && damageSource.displayCard != null && !string.IsNullOrEmpty(damageSource.displayCard.effect))
@@ -408,23 +418,23 @@ public class CardDisplay : MonoBehaviour
             if (damageSource.displayCard.effect.IndexOf("lethal", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 damageAmount = currentVigor + auraVigorBonus; 
-                Debug.Log($"[LETHAL] {damageSource.displayCard.name} triggered an instant-kill blow on {displayCard.name}!");
+                Debug.Log($"Lethal: {damageSource.displayCard.name} triggered an instant-kill blow on {displayCard.name}!");
             }
         }
 
         currentVigor -= damageAmount;
-        Debug.Log($"[DAMAGE] {displayCard.name} took {damageAmount} damage. Core Health Remaining: {currentVigor}");
+        Debug.Log($"Damage: {displayCard.name} took {damageAmount} damage. Core Health Remaining: {currentVigor}");
         
         RefreshCardUI();
 
         // Check if this hit is fatal
         if (currentVigor <= 0)
         {
-            // Use 'damageSource' (the variable that exists here)
             DestroyMonster(damageSource); 
         }
     }
 
+    // Associating a destroyed creature to gain of will points
     private void AwardCombatKillWill(CardDisplay attacker)
     {
         bool attackerIsPlayer = false;
@@ -477,8 +487,7 @@ public class CardDisplay : MonoBehaviour
             }
         }
 
-        // --- Global Will accumulation blocks removed from here completely ---
-
+        //Effect for Contrabandist
         if (displayCard != null && !string.IsNullOrEmpty(displayCard.effect))
         {
             if (displayCard.name.ToLower().Contains("contrabandist") || 
@@ -492,6 +501,7 @@ public class CardDisplay : MonoBehaviour
             }
         }
 
+        //Effect for Lyra
         if (displayCard != null)
         {
             string currentEffect = displayCard.effect;
@@ -503,6 +513,7 @@ public class CardDisplay : MonoBehaviour
             }
         }
 
+        //Effect for Imp
         if (displayCard != null)
         {
             string currentEffect = displayCard.effect;
@@ -538,6 +549,7 @@ public class CardDisplay : MonoBehaviour
             }
         }
 
+        //Effect for Bloodlust
         if (displayCard != null)
         {
             GameObject playerField = GameObject.FindWithTag("BattlefieldPlayer") ?? GameObject.Find("BattlefieldPlayer");
@@ -586,6 +598,7 @@ public class CardDisplay : MonoBehaviour
         Destroy(gameObject);
     }
 
+    //Resets flags by turn manager at the end of turn
     public void ResetTurnRestrictions()
     {
         hasSlumber = false;           
