@@ -13,15 +13,12 @@ public class Collection : MonoBehaviour
 
     void Start()
     {
-        // Sort A-Z. If it still looks Z-A, add .Reverse() here:
-        // var sortedCards = allCards.OrderBy(c => c.name).Reverse().ToList();
         var sortedCards = allCards.OrderBy(c => c.name).ToList();
 
         foreach (Card card in sortedCards)
         {
             GameObject cardUI = Instantiate(cardUIPrefab, contentParent);
             
-            // Name the object for inspection
             cardUI.name = card.name;
 
             UpdateText(cardUI, "Name", card.name);
@@ -54,8 +51,8 @@ public class Collection : MonoBehaviour
             if (img != null) 
             {
                 img.sprite = sprite;
-                img.color = Color.white; // Force it to be visible
-                img.enabled = true;      // Force it to be enabled
+                img.color = Color.white;
+                img.enabled = true;      
                 
                 // Debugging scale
                 child.localScale = Vector3.one; 
